@@ -9,7 +9,7 @@ namespace Code.Agents.Characters.FSM
     /// <summary>
     /// 캐릭터의 Move 상태를 나타내는 클래스입니다.
     /// </summary>
-    public class CharacterMoveState : AbstractCharacterState, ICanAttackState, ICanDodgeState, ICanWorkState
+    public class CharacterMoveState : AbstractCharacterState, ICanAttackState, ICanDodgeState, ICanWorkState, ICanToggleCombatState
     {
         private readonly Transform _mainCameraTransform;
         private IWeaponModule _weaponModule;

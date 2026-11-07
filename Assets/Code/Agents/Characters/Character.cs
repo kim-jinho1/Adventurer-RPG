@@ -221,7 +221,7 @@ namespace Code.Agents.Characters
 
         private void HandleCombatToggleKey()
         {
-            if (IsDead || _stateMachine.CurrentState is not (CharacterIdleState or CharacterMoveState))
+            if (IsDead || _stateMachine.CurrentState is not ICanToggleCombatState)
                 return;
 
             ChangeState(_weaponModule.IsDrawn ? CharacterStateEnum.COMBAT_EXIT : CharacterStateEnum.COMBAT_ENTER);
