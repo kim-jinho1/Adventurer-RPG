@@ -24,7 +24,7 @@ namespace Code.Agents.Enemies.BT.Actions
             if(Enemy.Value == null)
                 return Status.Failure;
 
-            Enemy.Value.SetDead();
+            Enemy.Value.ProcessDead();
             return Status.Success;
         }
     }

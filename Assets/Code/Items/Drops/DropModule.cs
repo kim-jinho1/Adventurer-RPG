@@ -19,35 +19,35 @@ namespace Code.Items.Drops
 
         private readonly List<ItemAmount> _dropResults = new();
 
+        private Agent _agent;
         private ModuleOwner _owner;
-        private IHealthModule _healthModule;
         private bool _isDropped;
 
         public void Initialize(ModuleOwner owner)
         {
             _owner = owner;
-            _healthModule = owner.GetModule<IHealthModule>();
-            Debug.Assert(_healthModule != null, $"[DropModule] IHealthModule 모듈 없음: {gameObject.name}", this);
+            _agent = owner as Agent;
+            
+            Debug.Assert(_agent != null, $"[DropModule] Agent 컴포넌트 없음: {gameObject.name}", this);
             Debug.Assert(dropTable != null, $"[DropModule] dropTable 연결 안 됨: {gameObject.name}", this);
             Debug.Assert(itemScatter != null, $"[DropModule] itemScatter 연결 안 됨: {gameObject.name}", this);
         }
 
         public void AfterInitialize()
         {
-            // 적은 사망 시 Agent.OnDeath를 부르지 않고 BT로 상태만 보내므로, 체력 0을 직접 본다
-            if (_healthModule != null)
-                _healthModule.OnHealthChange += HandleHealthChange;
+            if (_agent != null)
+                _agent.OnDeath.AddListener(HandleDeath);
         }
 
         private void OnDestroy()
         {
-            if (_healthModule != null)
-                _healthModule.OnHealthChange -= HandleHealthChange;
+            if (_agent != null)
+                _agent.OnDeath.RemoveListener(HandleDeath);
         }
 
-        private void HandleHealthChange(float before, float health, float max)
+        private void HandleDeath()
         {
-            if (_isDropped || health > 0f)
+            if (_isDropped)
                 return;
 
             _isDropped = true;

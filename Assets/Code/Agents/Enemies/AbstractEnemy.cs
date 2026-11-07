@@ -17,6 +17,7 @@ namespace Code.Agents.Enemies
     {
         [field: SerializeField] public EnemyAttackConfigSO AttackConfig { get; private set; }
         [SerializeField] private VariableSO[] btVariables;
+        
         [FormerlySerializedAs("resetCooldownOnHit")]
         [SerializeField] private bool isCooldownResetOnHit = true;    // 보스는 꺼서 맞아도 공격 쿨타임이 유지되게 한다
 
@@ -83,6 +84,7 @@ namespace Code.Agents.Enemies
             base.AfterInitializeComponents();
             HealthModule.OnHealthChange += HandleHealthChange;
             OnHit.AddListener(HandleHit);
+            OnDeath.AddListener(HandleDead);
         }
 
         protected override void Start()
@@ -101,25 +103,16 @@ namespace Code.Agents.Enemies
         {
             HealthModule.OnHealthChange -= HandleHealthChange;
             OnHit.RemoveListener(HandleHit);
+            OnDeath.RemoveListener(HandleDead);
         }
 
         /// <summary>
-        /// 체력이 0이 되면 사망 상태를 보냅니다. 피격(HIT)은 경직 있는 공격일 때만 HandleHit에서 보냅니다.
+        /// 체력이 줄면 공격 쿨다운을 초기화합니다.
         /// </summary>
         private void HandleHealthChange(float before, float health, float max)
         {
             if (IsDead || health >= before)
                 return;
-
-            if (health <= 0)
-            {
-                IsDead = true;
-                if (TryGetChannel(BTVariableEnum.StateChannel, ref _stateChannel))
-                    _stateChannel.Value.SendEventMessage(EnemyStateEnum.DEAD);
-
-                // 보스의 EndingTrigger 같은 바깥 구독자가 받도록 플레이어처럼 사망을 알린다
-                OnDeath?.Invoke();
-            }
 
             if (isCooldownResetOnHit && AttackModule is EnemyAttackModule enemyAttackModule)
                 enemyAttackModule.ResetAllCooldowns();
@@ -132,6 +125,15 @@ namespace Code.Agents.Enemies
         {
             if (TryGetChannel(BTVariableEnum.StateChannel, ref _stateChannel))
                 _stateChannel.Value.SendEventMessage(EnemyStateEnum.HIT);
+        }
+
+        /// <summary>
+        /// 사망하면 행동 트리에 사망 상태를 보냅니다.
+        /// </summary>
+        private void HandleDead()
+        {
+            if (TryGetChannel(BTVariableEnum.StateChannel, ref _stateChannel))
+                _stateChannel.Value.SendEventMessage(EnemyStateEnum.DEAD);
         }
 
         /// <summary>
@@ -171,14 +173,13 @@ namespace Code.Agents.Enemies
         }
 
         /// <summary>
-        /// 적 캐릭터를 사망 상태로 설정하고, 관련 처리를 수행합니다.
+        /// 사망한 적의 시체를 처리합니다.
         /// </summary>
-        public void SetDead()
+        public void ProcessDead()
         {
             if (GraphAgent != null)
                 GraphAgent.enabled = false;
-
-            IsDead = true;
+            
             gameObject.layer = LayerMask.NameToLayer(_deadBodyLayerName);
             Destroy(gameObject, 3f); // 사망 모션이 끝나도록 3초 뒤 지운다 (사라지는 연출은 아직 없음)
         }

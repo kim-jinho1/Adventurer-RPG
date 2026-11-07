@@ -124,7 +124,7 @@ namespace Code.Agents.Characters
         }
 
         /// <summary>
-        /// 체력이 줄면 전투 상태를 갱신하고, 0이 되면 사망 처리합니다. 데미지가 아닌 이유로 0이 된 경우도 여기서 잡힙니다.
+        /// 체력이 줄면 전투 상태를 갱신합니다. 사망 판정은 HealthModule이 합니다.
         /// </summary>
         private void HandleHealthChange(float before, float health, float max)
         {
@@ -136,12 +136,6 @@ namespace Code.Agents.Characters
             _lastMaxHealth = max;
             if (health < before && !isMaxHealthChanged)
                 _attackModule.SetLastBattle();
-
-            if (health <= 0f)
-            {
-                IsDead = true;
-                OnDeath?.Invoke();
-            }
         }
 
         private void HandleWorkRequested(WorkRequest request)
@@ -235,9 +229,7 @@ namespace Code.Agents.Characters
             if (!IsDead)
                 return;
 
-            // IsDead를 먼저 꺼야 HandleHealthChange가 회복을 무시하지 않는다
-            IsDead = false;
-            HealthModule.Heal(HealthModule.MaxHealth);
+            HealthModule.Revive();
             ChangeState(CharacterStateEnum.IDLE);
         }
 

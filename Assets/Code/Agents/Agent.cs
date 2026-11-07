@@ -10,14 +10,15 @@ namespace Code.Agents
     /// </summary>
     public class Agent : ModuleOwner
     {
-        public bool IsDead { get; protected set; }
-
-        public AgentSensor Sensor { get; private set; }
-
         [field: FormerlySerializedAs("OnHit")]
         [field: SerializeField] public UnityEvent OnHit { get; private set; }
+        
         [field: FormerlySerializedAs("OnDeath")]
         [field: SerializeField] public UnityEvent OnDeath { get; private set; }
+        
+        public AgentSensor Sensor { get; private set; }
+        
+        public bool IsDead { get; private set; }
 
         protected override void InitializeComponents()
         {
@@ -27,5 +28,18 @@ namespace Code.Agents
 
         protected virtual void Start()
         { }
+
+        /// <summary>
+        /// 사망 여부를 바꾸고, 죽을 때 OnDeath를 알립니다. HealthModule만 부릅니다.
+        /// </summary>
+        public void SetDead(bool isDead)
+        {
+            if (IsDead == isDead)
+                return;
+
+            IsDead = isDead;
+            if (isDead)
+                OnDeath?.Invoke();
+        }
     }
 }

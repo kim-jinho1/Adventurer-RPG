@@ -118,7 +118,6 @@ Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모�
   대상은 `CharacterAttackModule` ↔ `EnemyAttackModule`, `AbstractCharacterAttack` ↔ `AbstractEnemyAttack`, `ComboAttack` ↔ `CommonMeleeAttack`.
   공통 베이스를 뽑고 데미지 계산만 서브클래스가 덮어쓰게 할 계획입니다.
 - **인터페이스로 받고 바로 캐스팅**: `AbstractCharacterAttack`이 `IAttackModule`을 `CharacterAttackModule`로 바꿔 씁니다. 다른 구현으로 바꾸면 동작이 조용히 빠집니다.
-- **체력 · 사망 판정이 흩어짐**: `Character`와 `AbstractEnemy`가 각자 판정합니다. `HealthModule`로 모을 계획입니다.
 - **"클립 끝" 이벤트의 출처를 모름**: 크로스페이드 중에 빠져나가는 클립의 이벤트로 방금 들어간 상태가 끝날 수 있습니다. 지금은 블렌드 없이 재생해서 드러나지 않습니다.
 - **그 밖**: FSM 상태의 반복 코드, UI 문구 · 색 하드코딩, 튜닝값 상수, 스폰 지점 문자열 반복.
 - **성능**: 마을은 일부 프레임이 여전히 33ms를 넘습니다(모듈식 건물 Overdraw 후보, 미검증). 처음 나온 공격 · 피격 · 채집 프레임의 Self 튐(3 ~ 6ms)은 풀링으로 줄지 않았습니다. `targetFrameRate`는 아직 정하지 않았습니다.

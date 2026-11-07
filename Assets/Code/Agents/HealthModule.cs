@@ -26,7 +26,11 @@ namespace Code.Agents
                 float before = _currentHealth;
                 _currentHealth = Mathf.Clamp(value, 0f, MaxHealth);
                 if (!Mathf.Approximately(before, _currentHealth))
+                {
                     OnHealthChange?.Invoke(before, _currentHealth, MaxHealth);
+                    if (_currentHealth <= 0f && _owner != null && !_owner.IsDead)
+                        _owner.SetDead(true);
+                }
             }
         }
 
@@ -78,7 +82,7 @@ namespace Code.Agents
             _actionDataModule.IsLastHitCritical = damageData.IsCritical;
             _actionDataModule.IsLastHitStagger = damageData.CausesStagger;
 
-            // 죽는 한 방이면 이 안에서 HandleHealthChange가 IsDead를 켠다
+            // 죽는 한 방이면 CurrentHealth 세터가 SetDead(true)를 부른다
             CurrentHealth -= damageData.DamageAmount;
             OnDamaged?.Invoke(); // 피격 이벤트
             // 사망과 피격이 겹치지 않게 살아 있을 때만 알리고, 강약 구분은 받는 쪽이 IsLastHitStagger로 한다
@@ -91,6 +95,12 @@ namespace Code.Agents
         /// </summary>
         public void Heal(float health)
             => CurrentHealth += health;
+
+        public void Revive()
+        {
+            _owner.SetDead(false);
+            CurrentHealth = MaxHealth;
+        }
 
         /// <summary>
         /// 최대 체력 변화를 업데이트 합니다. 현재 체력은 비율을 유지합니다.

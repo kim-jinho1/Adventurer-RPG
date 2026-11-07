@@ -23,5 +23,7 @@ namespace Code.Agents
 
         /// <summary> 받은 치유량을 적용합니다. </summary>
         void Heal(float health);
+        /// <summary> 체력을 가득 채우고 살아 있는 상태로 되돌립니다. </summary>
+        void Revive();
     }
 }
