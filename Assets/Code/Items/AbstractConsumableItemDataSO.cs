@@ -1,4 +1,5 @@
 using Code.Modules;
+using UnityEngine;
 
 namespace Code.Items
 {
@@ -7,11 +8,11 @@ namespace Code.Items
     /// </summary>
     public abstract class AbstractConsumableItemDataSO : AbstractItemDataSO, IItemAction
     {
+        [field: Header("Action")]
+        [field: SerializeField] public string ActionLabel { get; private set; } = "사용";
+
         public override ItemTypeEnum ItemType
             => ItemTypeEnum.Consumable;
-
-        public string ActionLabel
-            => "사용";
 
         public bool IsConsumedOnAct
             => true;

@@ -17,6 +17,7 @@ namespace Code.Items
         [field: SerializeField] public EquipSlotEnum EquipSlot { get; private set; }
         // 켤 메쉬 번호 (무기는 Sword_00N + Shield_00N, 방어구는 Armor_00N 세트의 해당 부위)
         [field: SerializeField, Min(1)] public int MeshIndex { get; private set; } = 1;
+        [field: SerializeField] public string ActionLabel { get; private set; } = "장착";
         [SerializeField] private List<StatModifyData> modifyStats = new();
 
         /// <summary> 장착 시 더해지는 스탯 목록입니다. </summary>
@@ -24,9 +25,6 @@ namespace Code.Items
 
         public override ItemTypeEnum ItemType
             => ItemTypeEnum.Equipment;
-
-        public string ActionLabel
-            => "장착";
 
         public bool IsConsumedOnAct
             => false;

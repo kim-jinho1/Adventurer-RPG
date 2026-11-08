@@ -27,6 +27,9 @@ namespace Code.UIs
         [SerializeField] private EquipSlotListView equipSlotListView;
         [SerializeField] private ItemDetailView detailView;
 
+        [Header("Texts")]
+        [SerializeField] private string unequipLabel = "해제";     // 장비 칸을 골랐을 때 버튼 글자
+
         private const int _noSelection = -1;
 
         private IInventoryModule _inventoryModule;
@@ -184,7 +187,7 @@ namespace Code.UIs
                 EquipItemDataSO equipped = _equipmentModule?.GetEquippedItem(_selectedEquipSlot);
                 // 필수 슬롯(무기)이거나 가방에 자리가 없으면 벗을 수 없으므로 버튼을 막아 눌러도 반응 없는 상황을 없앤다
                 bool canUnequip = _equipmentModule != null && _equipmentModule.CanUnequip(_selectedEquipSlot);
-                detailView.Show(equipped, "해제", canUnequip);
+                detailView.Show(equipped, unequipLabel, canUnequip);
                 return;
             }
 

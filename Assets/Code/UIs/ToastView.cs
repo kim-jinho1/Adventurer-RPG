@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Code.UIs
 {
     /// <summary>
-    /// 아이템 획득 · 가방 가득 참 · 레벨업을 화면에 잠깐 띄웠다가 흐리게 사라지게 합니다.
+    /// 아이템 획득 · 가방 가득 참 · 제작 완료 · 레벨업을 화면에 잠깐 띄웠다가 흐리게 사라지게 합니다.
     /// </summary>
     public class ToastView : MonoBehaviour
     {
@@ -31,6 +31,12 @@ namespace Code.UIs
         [SerializeField] private Color warningColor = Color.indianRed;
         [SerializeField] private Color levelUpColor = Color.yellowNice;
         [SerializeField] private Color craftColor = new(0.6f, 0.85f, 1f);
+
+        [Header("Texts")]
+        [SerializeField] private string acquireFormat = "{0} x{1} 획득";           // {0} 아이템 이름, {1} 개수
+        [SerializeField] private string inventoryFullMessage = "가방이 가득 찼습니다";
+        [SerializeField] private string craftFormat = "{0} 제작 완료!";            // {0} 결과 아이템 이름
+        [SerializeField] private string levelUpFormat = "레벨 업! Lv.{0}";         // {0} 새 레벨
 
         private readonly List<TextMeshProUGUI> _lines = new();
         private readonly List<float> _remainTimes = new();
@@ -151,12 +157,12 @@ namespace Code.UIs
         private void HandleItemAcquired(ItemAcquiredEvent evt)
         {
             if (evt.Item != null)
-                ShowMessage($"{evt.Item.ItemName} x{evt.Count} 획득", acquireColor);
+                ShowMessage(string.Format(acquireFormat, evt.Item.ItemName, evt.Count), acquireColor);
         }
 
         private void HandleInventoryFull(InventoryFullEvent evt)
         {
-            ShowMessage("가방이 가득 찼습니다", warningColor);
+            ShowMessage(inventoryFullMessage, warningColor);
         }
 
         private void HandleWorkCompleted(WorkRequest work)
@@ -165,7 +171,7 @@ namespace Code.UIs
             if (_pendingRecipe == null || work.Target is not CraftingStation station || station != _pendingStation)
                 return;
 
-            ShowMessage($"{_pendingRecipe.Result.Item.ItemName} 제작 완료!", craftColor);
+            ShowMessage(string.Format(craftFormat, _pendingRecipe.Result.Item.ItemName), craftColor);
             _pendingRecipe = null;
             _pendingStation = null;
         }
@@ -179,7 +185,7 @@ namespace Code.UIs
 
         private void HandleLevelUp(int level)
         {
-            ShowMessage($"레벨 업! Lv.{level}", levelUpColor);
+            ShowMessage(string.Format(levelUpFormat, level), levelUpColor);
         }
     }
 }

@@ -19,6 +19,11 @@ namespace Code.UIs
         [SerializeField] private Image expFillImage;
         [SerializeField] private TMP_Text expText;
 
+        [Header("Texts")]
+        [SerializeField] private string levelFormat = "Lv.{0}";       // {0} 레벨
+        [SerializeField] private string expFormat = "{0} / {1}";      // {0} 현재 경험치, {1} 필요 경험치
+        [SerializeField] private string maxExpMessage = "MAX";        // 최대 레벨일 때 경험치 자리
+
         private ILevelModule _levelModule;
 
         private void Start()
@@ -46,14 +51,16 @@ namespace Code.UIs
         private void Refresh()
         {
             if (levelText != null)
-                levelText.text = $"Lv.{_levelModule.Level}";
+                levelText.text = string.Format(levelFormat, _levelModule.Level);
 
             int requiredExp = _levelModule.RequiredExp;
             if (expFillImage != null)
                 expFillImage.SetBarRatio(_levelModule.IsMaxLevel || requiredExp <= 0 ? 1f : (float)_levelModule.CurrentExp / requiredExp);
 
             if (expText != null)
-                expText.text = _levelModule.IsMaxLevel ? "MAX" : $"{_levelModule.CurrentExp} / {requiredExp}";
+                expText.text = _levelModule.IsMaxLevel
+                    ? maxExpMessage
+                    : string.Format(expFormat, _levelModule.CurrentExp, requiredExp);
         }
 
         private void HandleExpChanged(int currentExp, int requiredExp)

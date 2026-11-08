@@ -20,6 +20,9 @@ namespace Code.UIs
         [SerializeField] private Color enoughColor = new(0.93f, 0.9f, 0.69f);
         [SerializeField] private Color lackColor = new(0.95f, 0.35f, 0.3f);
 
+        [Header("Texts")]
+        [SerializeField] private string craftLabel = "제작";       // 제작 버튼 글자
+
         /// <summary> 제작 버튼 클릭 델리게이트입니다. </summary>
         public delegate void CraftClickHandler();
         /// <summary> 제작 버튼을 누르면 호출됩니다. 제작은 이 뷰를 쓰는 창이 합니다. </summary>
@@ -52,7 +55,7 @@ namespace Code.UIs
         public void Show(RecipeSO recipe, IInventoryModule inventoryModule, bool canCraft)
         {
             if (resultDetail != null)
-                resultDetail.Show(recipe.Result.Item, "제작", canCraft);
+                resultDetail.Show(recipe.Result.Item, craftLabel, canCraft);
 
             ShowIngredients(recipe, inventoryModule);
         }

@@ -12,6 +12,7 @@ namespace Code.Items
     {
         [field: Header("Heal Info")]
         [field: SerializeField, Min(0f)] public float HealAmount { get; private set; } = 20f;
+        [SerializeField] private string healFormat = "체력 +{0}";      // 설명 아래 회복량 줄, {0} 회복량
 
         public override bool CanUse(ModuleOwner user)
         {
@@ -30,6 +31,6 @@ namespace Code.Items
         }
 
         public override string GetDescription()
-            => $"{Description}\n체력 +{HealAmount}";
+            => $"{Description}\n{string.Format(healFormat, HealAmount)}";
     }
 }

@@ -23,6 +23,12 @@ namespace Code.UIs
         [SerializeField] private RecipeListView recipeListView;
         [SerializeField] private RecipeDetailView recipeDetailView;
 
+        [Header("Texts")]
+        [SerializeField] private string defaultTitle = "제작";                        // 레시피 목록 이름이 비었을 때 제목
+        [SerializeField] private string notEnoughMaterialsMessage = "재료가 부족합니다";
+        [SerializeField] private string notEnoughSpaceMessage = "가방에 빈 칸이 없습니다";
+        [SerializeField] private string invalidRecipeMessage = "잘못된 레시피입니다";
+
         private const int _noSelection = -1;
 
         private BusSubscriptionScope _busScope;
@@ -82,7 +88,7 @@ namespace Code.UIs
                 return;
 
             if (titleText != null)
-                titleText.text = string.IsNullOrEmpty(_recipeList.ListName) ? "제작" : _recipeList.ListName;
+                titleText.text = string.IsNullOrEmpty(_recipeList.ListName) ? defaultTitle : _recipeList.ListName;
 
             if (!isSameStation || _selectedRecipeIndex >= _recipeList.Recipes.Count)
                 _selectedRecipeIndex = _recipeList.Recipes.Count > 0 ? 0 : _noSelection;
@@ -132,16 +138,16 @@ namespace Code.UIs
                 statusText.text = message;
         }
 
-        private static string GetResultMessage(CraftResultEnum result)
+        private string GetResultMessage(CraftResultEnum result)
         {
             switch (result)
             {
                 case CraftResultEnum.NotEnoughMaterials:
-                    return "재료가 부족합니다";
+                    return notEnoughMaterialsMessage;
                 case CraftResultEnum.NotEnoughSpace:
-                    return "가방에 빈 칸이 없습니다";
+                    return notEnoughSpaceMessage;
                 case CraftResultEnum.InvalidRecipe:
-                    return "잘못된 레시피입니다";
+                    return invalidRecipeMessage;
                 default:
                     return string.Empty;
             }
