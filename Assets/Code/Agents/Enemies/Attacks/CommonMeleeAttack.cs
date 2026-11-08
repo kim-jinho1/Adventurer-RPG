@@ -1,4 +1,3 @@
-using Code.Animations;
 using Code.Combats;
 using Unity.Profiling;
 using UnityEngine;
@@ -12,14 +11,11 @@ namespace Code.Agents.Enemies.Attacks
     {
         private static readonly ProfilerMarker _castDamageMarker = new("CommonMeleeAttack.HandleCastDamage");
 
-        protected IAnimatorTrigger _trigger;
         private AbstractDamageCaster _damageCaster;
 
-        public override void InitializeAttack(IAttackModule attackModule)
+        public override void InitializeAttack(EnemyAttackModule attackModule)
         {
             base.InitializeAttack(attackModule);
-            _trigger = _enemy.GetModule<IAnimatorTrigger>();
-            Debug.Assert(_trigger != null, $"[CommonMeleeAttack] IAnimatorTrigger 모듈 없음: {gameObject.name}", this);
 
             _damageCaster = GetComponentInChildren<AbstractDamageCaster>();
             Debug.Assert(_damageCaster != null, $"[CommonMeleeAttack] AbstractDamageCaster 컴포넌트 없음: {gameObject.name}", this);
@@ -38,30 +34,22 @@ namespace Code.Agents.Enemies.Attacks
 
         public override void Attack(GameObject target = null)
         {
-            UnSubscribeEvents();
-            _trigger.OnAnimationEnd += HandleAttackEnd;
-            _trigger.OnAttackTrigger += HandleCastDamage;
-        }
-
-        private void HandleAttackEnd()
-        {
-            UnSubscribeEvents();
-            _lastAttackTime = Time.time;
-            _attackModule.InvokeAttackEnd();
-        }
-
-        private void UnSubscribeEvents()
-        {
-            _trigger.OnAnimationEnd -= HandleAttackEnd;
-            _trigger.OnAttackTrigger -= HandleCastDamage;
+            SubscribeTriggers();
         }
 
         public override void StopAttack()
         {
-            UnSubscribeEvents();
+            UnSubscribeTriggers();
         }
 
-        private void HandleCastDamage()
+        protected override void HandleAnimationEnd()
+        {
+            UnSubscribeTriggers();
+            _lastAttackTime = Time.time;
+            _attackModule.InvokeAttackEnd();
+        }
+
+        protected override void HandleCastDamage()
         {
             using (_castDamageMarker.Auto())
             {

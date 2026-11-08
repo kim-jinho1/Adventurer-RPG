@@ -1,5 +1,4 @@
 using Code.Agents.FSM;
-using Code.Animations;
 using Code.Combats;
 using Unity.Profiling;
 using UnityEngine;
@@ -23,19 +22,16 @@ namespace Code.Agents.Characters.Attacks
 
         private static readonly ProfilerMarker _castDamageMarker = new("ComboAttack.HandleCastDamage");
 
-        private IAnimatorTrigger _trigger;
         private IRenderer _renderer;
         private IMover _mover;
         private AbstractDamageCaster _damageCaster;
 
-        public override void InitializeAttack(IAttackModule attackModule)
+        public override void InitializeAttack(CharacterAttackModule attackModule)
         {
             base.InitializeAttack(attackModule);
-            _trigger = _character.GetModule<IAnimatorTrigger>();
             _renderer = _character.GetModule<IRenderer>();
             _mover = _character.GetModule<IMover>();
 
-            Debug.Assert(_trigger != null, $"[ComboAttack] IAnimatorTrigger 모듈 없음: {gameObject.name}", this);
             Debug.Assert(_renderer != null, $"[ComboAttack] IRenderer 모듈 없음: {gameObject.name}", this);
             Debug.Assert(_mover != null, $"[ComboAttack] IMover 모듈 없음: {gameObject.name}", this);
 
@@ -64,32 +60,25 @@ namespace Code.Agents.Characters.Attacks
             _damageCaster.transform.localPosition = offset;
             _mover.SetAutoMovement(_character.transform.TransformDirection(movement));
 
-            Unsubscribe();
-            _trigger.OnAttackTrigger += HandleCastDamage;    // 클립의 AttackTrigger 이벤트 (타격 타이밍)
-            _trigger.OnAnimationEnd += HandleAnimationEnd;  // 클립의 EndTrigger 이벤트 (클립 끝)
+            SubscribeTriggers();
         }
 
         public override void StopAttack()
         {
-            Unsubscribe();
+            UnSubscribeTriggers();
             base.StopAttack();
         }
 
-        private void Unsubscribe()
-        {
-            _trigger.OnAttackTrigger -= HandleCastDamage;
-            _trigger.OnAnimationEnd -= HandleAnimationEnd;
-        }
-
-        /// <summary> 타격 타이밍에 데미지를 캐스팅합니다. </summary>
-        private void HandleCastDamage()
+        protected override void HandleCastDamage()
         {
             using (_castDamageMarker.Auto())
             {
                 _trigger.OnAttackTrigger -= HandleCastDamage;
 
                 float damage = _attackModule.GetBaseDamage(AttackData);
-                Vector3 kbPower = comboCounter < overrideKnockBackForce.Length ? overrideKnockBackForce[comboCounter] : Vector3.zero;
+                Vector3 kbPower = comboCounter < overrideKnockBackForce.Length
+                    ? overrideKnockBackForce[comboCounter]
+                    : AttackData.KnockBackForce;
                 bool causesStagger = comboCounter < comboStagger.Length && comboStagger[comboCounter];
 
                 float finalDamage = _attackModule.ApplyCritical(damage, out bool isCritical);
@@ -99,10 +88,9 @@ namespace Code.Agents.Characters.Attacks
             }
         }
 
-        /// <summary> 클립이 끝나면 콤보를 넘기고 공격 종료를 알립니다. FSM은 IDLE로 돌아갑니다. </summary>
-        private void HandleAnimationEnd()
+        protected override void HandleAnimationEnd()
         {
-            Unsubscribe();
+            UnSubscribeTriggers();
             ++comboCounter;
             _lastAttackTime = Time.time;
             IsAttacking = false;
