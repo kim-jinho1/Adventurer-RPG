@@ -1,6 +1,5 @@
 using Code.Agents.FSM;
 using Code.Animations;
-using Code.Combats;
 using Code.Interactions;
 using Unity.Profiling;
 using UnityEngine;
@@ -16,8 +15,6 @@ namespace Code.Agents.Characters.FSM
 
         private readonly IWorkModule _workModule;
         private readonly IWorkToolModule _workToolModule;
-        private readonly IWeaponModule _weaponModule;
-        private readonly IAnimatorTrigger _trigger;
 
         private WorkRequest _work;  // Enter에서 복사해 두어 도중에 새 요청 · ClearWork가 와도 시작한 작업을 끝까지 들고 간다
         private float _endTime;
@@ -26,12 +23,8 @@ namespace Code.Agents.Characters.FSM
         {
             _workModule = _character.GetModule<IWorkModule>();
             _workToolModule = _character.GetModule<IWorkToolModule>();
-            _weaponModule = _character.GetModule<IWeaponModule>();
-            _trigger = _character.GetModule<IAnimatorTrigger>();
             Debug.Assert(_workModule != null, $"[CharacterWorkState] IWorkModule 모듈 없음: {_character.name}", _character);
             Debug.Assert(_workToolModule != null, $"[CharacterWorkState] IWorkToolModule 모듈 없음: {_character.name}", _character);
-            Debug.Assert(_weaponModule != null, $"[CharacterWorkState] IWeaponModule 모듈 없음: {_character.name}", _character);
-            Debug.Assert(_trigger != null, $"[CharacterWorkState] IAnimatorTrigger 모듈 없음: {_character.name}", _character);
         }
 
         public override void Enter()

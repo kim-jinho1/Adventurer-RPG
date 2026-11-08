@@ -27,7 +27,7 @@ namespace Code.Agents.Enemies.BT.Actions
 
             EnemyAttackConfigSO attackConfig = Enemy.Value.AttackConfig;
             AgentSensor sensor = Enemy.Value.Sensor;
-            Vector3 startPosition = Enemy.Value.transform.position + new Vector3(0, 0.5f);
+            Vector3 startPosition = Enemy.Value.transform.position + Vector3.up * attackConfig.EyeHeight;
 
             if (sensor.IsTargetInRange(attackConfig.DetectRange, out Collider hitCollider)
                 && sensor.IsTargetInSight(startPosition, attackConfig.DetectRange, hitCollider))

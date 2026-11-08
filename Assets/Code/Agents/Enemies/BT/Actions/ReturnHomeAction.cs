@@ -37,7 +37,8 @@ namespace Code.Agents.Enemies.BT.Actions
 
             Vector3 direction = homePosition - currentPosition;
             direction.y = 0f;
-            if (direction.sqrMagnitude < 0.3f * 0.3f)
+            float arriveDistance = Enemy.Value.AttackConfig.HomeArriveDistance;
+            if (direction.sqrMagnitude < arriveDistance * arriveDistance)
             {
                 _mover.StopImmediately();
                 return Status.Success;

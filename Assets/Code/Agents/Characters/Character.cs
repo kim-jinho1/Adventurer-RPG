@@ -33,6 +33,13 @@ namespace Code.Agents.Characters
         [field: SerializeField] public AnimParamSO LocomotionCombatParam { get; private set; }
         [field: SerializeField] public float MoveBlendDampTime { get; private set; } = 0.1f;
 
+        // 회피 값은 애니메이터 ROLL 상태 0.85배속에 맞춘 값이다 (시간은 ÷0.85, 속도는 ×0.85로 구르는 거리 약 4.2m)
+        [field: Header("Character Action")]
+        [field: SerializeField] public float DodgeInvincibleDuration { get; private set; } = 0.59f;     // 구르기 시작 후 무적 시간
+        [field: SerializeField] public float DodgeMoveDuration { get; private set; } = 0.82f;           // 구르기 시작 후 밀리는 시간
+        [field: SerializeField] public float DodgeSpeed { get; private set; } = 5.1f;                   // 구르는 속도 (m/s)
+        [field: SerializeField] public float HitKnockbackDuration { get; private set; } = 0.2f;         // 맞고 밀리는 시간
+
         [Header("Character State Machine")]
         [SerializeField] private StateListSO stateList;
 

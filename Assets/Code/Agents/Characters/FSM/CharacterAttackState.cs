@@ -8,18 +8,18 @@ namespace Code.Agents.Characters.FSM
     /// </summary>
     public class CharacterAttackState : AbstractCharacterState, ICanDodgeState
     {
-        private readonly CharacterAttackModule _attackModule;
+        private readonly CharacterAttackModule _characterAttackModule;
 
         public CharacterAttackState(Agent agent, AnimParamSO paramSO) : base(agent, paramSO)
         {
-            _attackModule = agent.GetModule<CharacterAttackModule>();
+            _characterAttackModule = agent.GetModule<CharacterAttackModule>();
         }
 
         public override void Enter()
         {
             _isTriggerCall = false;
             _mover.CanManualMovement = false;
-            _attackModule.OnAttackEnd += HandleAnimationEnd;
+            _characterAttackModule.OnAttackEnd += HandleAnimationEnd;
         }
 
         public override void Update()
@@ -32,10 +32,10 @@ namespace Code.Agents.Characters.FSM
         public override void Exit()
         {
             _mover.CanManualMovement = true;
-            if (_attackModule.CurrentAttack != null)
-                _attackModule.CurrentAttack.StopAttack();
+            if (_characterAttackModule.CurrentAttack != null)
+                _characterAttackModule.CurrentAttack.StopAttack();
 
-            _attackModule.OnAttackEnd -= HandleAnimationEnd;
+            _characterAttackModule.OnAttackEnd -= HandleAnimationEnd;
             base.Exit();
         }
     }

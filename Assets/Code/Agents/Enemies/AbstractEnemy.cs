@@ -20,6 +20,7 @@ namespace Code.Agents.Enemies
         
         [FormerlySerializedAs("resetCooldownOnHit")]
         [SerializeField] private bool isCooldownResetOnHit = true;    // 보스는 꺼서 맞아도 공격 쿨타임이 유지되게 한다
+        [SerializeField] private float deadBodyDuration = 3f;         // 죽은 뒤 시체가 남는 시간 (사망 모션이 끝날 만큼)
 
         public BehaviorGraphAgent GraphAgent { get; private set; }
 
@@ -181,7 +182,7 @@ namespace Code.Agents.Enemies
                 GraphAgent.enabled = false;
             
             gameObject.layer = LayerMask.NameToLayer(_deadBodyLayerName);
-            Destroy(gameObject, 3f); // 사망 모션이 끝나도록 3초 뒤 지운다 (사라지는 연출은 아직 없음)
+            Destroy(gameObject, deadBodyDuration); // 사라지는 연출은 아직 없다
         }
 
         /// <summary> BT 애니메이션 채널로 클립 재생을 요청합니다. </summary>

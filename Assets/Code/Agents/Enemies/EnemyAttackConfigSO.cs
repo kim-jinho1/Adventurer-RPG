@@ -12,5 +12,7 @@ namespace Code.Agents.Enemies
         [field: SerializeField] public float DetectRange { get; private set; }
         [field: SerializeField] public float StoppingDistance { get; private set; }
         [field: SerializeField] public float LoseRange { get; private set; }
+        [field: SerializeField] public float EyeHeight { get; private set; } = 0.5f;            // 시야 검사를 시작하는 높이
+        [field: SerializeField] public float HomeArriveDistance { get; private set; } = 0.3f;   // 처음 자리에 도착했다고 보는 거리
     }
 }

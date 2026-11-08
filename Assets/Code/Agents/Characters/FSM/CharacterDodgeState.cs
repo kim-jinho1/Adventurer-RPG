@@ -6,28 +6,14 @@ namespace Code.Agents.Characters.FSM
     /// <summary>
     /// 캐릭터의 회피(구르기) 상태를 나타내는 클래스입니다. 앞부분 동안 무적이고, 클립이 끝나면 Idle로 돌아갑니다.
     /// </summary>
-    public class CharacterDodgeState : AbstractCharacterState
+    public class CharacterDodgeState : AbstractOneShotState
     {
-        // 애니메이터 ROLL 상태를 0.85배속으로 늦춰서 시간은 ÷0.85, 속도는 ×0.85로 맞춘다 (구르는 거리는 약 4.2m 그대로)
-        private const float _invincibleDuration = 0.59f; // 시작 후 이 시간 동안 무적
-        private const float _moveDuration = 0.82f;       // 시작 후 이 시간 동안 앞으로 밀린다
-        private const float _dodgeSpeed = 5.1f;          // 구르는 속도 (m/s)
-
-        private readonly Transform _mainCameraTransform;
-        private IAnimatorTrigger _trigger;
-
         private float _invincibleEndTime;
         private float _moveEndTime;
         private bool _isMoving;
 
         public CharacterDodgeState(Agent agent, AnimParamSO paramSO) : base(agent, paramSO)
-        {
-            _trigger = agent.GetModule<IAnimatorTrigger>();
-            Debug.Assert(_trigger != null, $"[CharacterDodgeState] IAnimatorTrigger 모듈 없음: {_character.name}", _character);
-
-            if (Camera.main != null)
-                _mainCameraTransform = Camera.main.transform;
-        }
+        { }
 
         public override void Enter()
         {
@@ -40,14 +26,12 @@ namespace Code.Agents.Characters.FSM
             _mover.IsRotationLocked = true;
             _mover.StopImmediately();
             _mover.CanManualMovement = false;
-            _mover.SetAutoMovement(dodgeDirection * _dodgeSpeed);
+            _mover.SetAutoMovement(dodgeDirection * _character.DodgeSpeed);
 
             _character.HealthModule.IsInvincible = true;
-            _invincibleEndTime = Time.time + _invincibleDuration;
-            _moveEndTime = Time.time + _moveDuration;
+            _invincibleEndTime = Time.time + _character.DodgeInvincibleDuration;
+            _moveEndTime = Time.time + _character.DodgeMoveDuration;
             _isMoving = true;
-
-            _trigger.OnAnimationEnd += HandleAnimationEnd;
         }
 
         public override void Update()
@@ -69,20 +53,11 @@ namespace Code.Agents.Characters.FSM
         private Vector3 GetDodgeDirection()
         {
             Vector2 input = _character.CharacterInput.InputDirection;
-            if (input.sqrMagnitude < _inputThreshold || _mainCameraTransform == null)
+            if (input.sqrMagnitude < _inputThreshold)
                 return _character.transform.forward;
 
-            Vector3 forward = _mainCameraTransform.forward;
-            Vector3 right = _mainCameraTransform.right;
-            forward.y = 0f;
-            right.y = 0f;
-
-            return (forward.normalized * input.y + right.normalized * input.x).normalized;
-        }
-
-        public override void HandleAnimationEnd()
-        {
-            _character.ChangeState(CharacterStateEnum.IDLE);
+            Vector3 direction = GetCameraRelativeDirection(input);
+            return direction == Vector3.zero ? _character.transform.forward : direction;
         }
 
         public override void Exit()
@@ -92,8 +67,6 @@ namespace Code.Agents.Characters.FSM
             _mover.StopImmediately();
             _mover.CanManualMovement = true;
             _mover.IsRotationLocked = false;
-
-            _trigger.OnAnimationEnd -= HandleAnimationEnd;
             base.Exit();
         }
     }
