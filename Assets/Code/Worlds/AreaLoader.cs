@@ -18,11 +18,11 @@ namespace Code.Worlds
     {
         [Header("Start Area")]
         [SerializeField] private AreaSO startArea;
-        [SerializeField] private string startSpawnPointId = "Default";
+        [SerializeField] private SpawnPointSO startSpawnPoint;
 
         [Header("Respawn")]
         [SerializeField] private AreaSO respawnArea;
-        [SerializeField] private string respawnSpawnPointId = "Default";
+        [SerializeField] private SpawnPointSO respawnSpawnPoint;
         [SerializeField, Min(0f)] private float respawnDelay = 2.5f; // 사망 모션을 보여 주는 시간
 
         [Header("References")]
@@ -51,6 +51,8 @@ namespace Code.Worlds
             Debug.Assert(characterInput != null, $"[AreaLoader] characterInput 연결 안 됨: {gameObject.name}", this);
             Debug.Assert(screenFader != null, $"[AreaLoader] screenFader 연결 안 됨: {gameObject.name}", this);
             Debug.Assert(respawnArea != null, $"[AreaLoader] respawnArea 연결 안 됨: {gameObject.name}", this);
+            Debug.Assert(startSpawnPoint != null, $"[AreaLoader] startSpawnPoint 연결 안 됨: {gameObject.name}", this);
+            Debug.Assert(respawnSpawnPoint != null, $"[AreaLoader] respawnSpawnPoint 연결 안 됨: {gameObject.name}", this);
 
             _characterController = player.GetComponent<CharacterController>();
             _agentMover = player.GetComponentInChildren<AgentMover>();
@@ -70,7 +72,7 @@ namespace Code.Worlds
             Scene openedArea = FindOpenedAreaScene();
             StartCoroutine(openedArea.IsValid()
                 ? EnterOpenedAreaRoutine(openedArea)
-                : TransitionRoutine(startArea, startSpawnPointId));
+                : TransitionRoutine(startArea, startSpawnPoint));
         }
 
         private void OnDestroy()
@@ -87,7 +89,7 @@ namespace Code.Worlds
             if (_isTransitioning || evt.Area == null)
                 return;
 
-            StartCoroutine(TransitionRoutine(evt.Area, evt.SpawnPointId));
+            StartCoroutine(TransitionRoutine(evt.Area, evt.SpawnPoint));
         }
 
         private void HandleGameClearedEvent(GameClearedEvent evt)
@@ -114,10 +116,10 @@ namespace Code.Worlds
             while (_isTransitioning)
                 yield return null;
 
-            yield return TransitionRoutine(respawnArea, respawnSpawnPointId, true);
+            yield return TransitionRoutine(respawnArea, respawnSpawnPoint, true);
         }
 
-        private IEnumerator TransitionRoutine(AreaSO area, string spawnPointId, bool isRevivePlayer = false)
+        private IEnumerator TransitionRoutine(AreaSO area, SpawnPointSO targetSpawnPoint, bool isRevivePlayer = false)
         {
             if (!Application.CanStreamedLevelBeLoaded(area.SceneName))
             {
@@ -137,7 +139,7 @@ namespace Code.Worlds
             yield return SceneManager.LoadSceneAsync(area.SceneName, LoadSceneMode.Additive);
             _currentScene = SceneManager.GetSceneByName(area.SceneName);
 
-            yield return EndTransition(area, spawnPointId, isRevivePlayer);
+            yield return EndTransition(area, targetSpawnPoint, isRevivePlayer);
         }
 
         private IEnumerator EnterOpenedAreaRoutine(Scene scene)
@@ -147,7 +149,7 @@ namespace Code.Worlds
 
             // 열려 있는 씬이 시작 지역이면 데이터를 알 수 있고, 다른 지역이면 데이터 없이 들어간다
             AreaSO area = startArea != null && startArea.SceneName == scene.name ? startArea : null;
-            yield return EndTransition(area, startSpawnPointId);
+            yield return EndTransition(area, startSpawnPoint);
         }
 
         private void BeginTransition()
@@ -163,12 +165,12 @@ namespace Code.Worlds
             }
         }
 
-        private IEnumerator EndTransition(AreaSO area, string spawnPointId, bool isRevivePlayer = false)
+        private IEnumerator EndTransition(AreaSO area, SpawnPointSO targetSpawnPoint, bool isRevivePlayer = false)
         {
             // 활성 씬이어야 지역 씬의 조명 · 안개 · 스카이박스가 적용되고, 런타임에 생기는 오브젝트도 그 지역 씬에 들어간다
             SceneManager.SetActiveScene(_currentScene);
 
-            AreaSpawnPoint spawnPoint = FindSpawnPoint(_currentScene, spawnPointId);
+            AreaSpawnPoint spawnPoint = FindSpawnPoint(_currentScene, targetSpawnPoint);
             if (spawnPoint != null)
                 WarpPlayer(spawnPoint.transform);
 
@@ -217,14 +219,14 @@ namespace Code.Worlds
             return default;
         }
 
-        private static AreaSpawnPoint FindSpawnPoint(Scene scene, string spawnPointId)
+        private static AreaSpawnPoint FindSpawnPoint(Scene scene, SpawnPointSO targetSpawnPoint)
         {
             AreaSpawnPoint fallback = null;
             foreach (GameObject root in scene.GetRootGameObjects())
             {
                 foreach (AreaSpawnPoint spawnPoint in root.GetComponentsInChildren<AreaSpawnPoint>())
                 {
-                    if (spawnPoint.Id == spawnPointId)
+                    if (spawnPoint.Id == targetSpawnPoint)
                         return spawnPoint;
 
                     if (fallback == null)
@@ -233,7 +235,7 @@ namespace Code.Worlds
             }
 
             // 이름이 틀려도 지역 어딘가에는 내려 주고, 개발 중에 알 수 있게 경고한다
-            Debug.Assert(fallback == null, $"[AreaLoader] 도착 지점 '{spawnPointId}' 없음 → 다른 지점 사용: {scene.name}");
+            Debug.Assert(fallback == null, $"[AreaLoader] 도착 지점 '{targetSpawnPoint}' 없음 → 다른 지점 사용: {scene.name}");
             Debug.Assert(fallback != null, $"[AreaLoader] 도착 지점 하나도 없음: {scene.name}");
             return fallback;
         }

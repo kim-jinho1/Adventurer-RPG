@@ -9,12 +9,12 @@ namespace Code.GameEvents.Worlds
     public readonly struct AreaTransitionRequestEvent : IEvent
     {
         public AreaSO Area { get; }
-        public string SpawnPointId { get; }
+        public SpawnPointSO SpawnPoint { get; }
 
-        public AreaTransitionRequestEvent(AreaSO area, string spawnPointId)
+        public AreaTransitionRequestEvent(AreaSO area, SpawnPointSO spawnPoint)
         {
             Area = area;
-            SpawnPointId = spawnPointId;
+            SpawnPoint = spawnPoint;
         }
     }
 }

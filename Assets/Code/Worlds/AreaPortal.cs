@@ -13,7 +13,7 @@ namespace Code.Worlds
     {
         [field: Header("Portal Setting")]
         [field: SerializeField] public AreaSO TargetArea { get; private set; }
-        [field: SerializeField] public string TargetSpawnPointId { get; private set; } = "Default";
+        [field: SerializeField] public SpawnPointSO TargetSpawnPoint { get; private set; }
 
         [SerializeField] private LayerMask playerLayer;
         [SerializeField] private OwnerEnum eventOwner = OwnerEnum.Player;
@@ -21,6 +21,7 @@ namespace Code.Worlds
         private void Awake()
         {
             Debug.Assert(TargetArea != null, $"[AreaPortal] TargetArea 연결 안 됨: {gameObject.name}", this);
+            Debug.Assert(TargetSpawnPoint != null, $"[AreaPortal] TargetSpawnPoint 연결 안 됨: {gameObject.name}", this);
             GetComponent<Collider>().isTrigger = true;
         }
 
@@ -29,7 +30,7 @@ namespace Code.Worlds
             if ((playerLayer.value & (1 << other.gameObject.layer)) == 0)
                 return;
 
-            Bus<AreaTransitionRequestEvent>.Raise(eventOwner, new AreaTransitionRequestEvent(TargetArea, TargetSpawnPointId));
+            Bus<AreaTransitionRequestEvent>.Raise(eventOwner, new AreaTransitionRequestEvent(TargetArea, TargetSpawnPoint));
         }
     }
 }

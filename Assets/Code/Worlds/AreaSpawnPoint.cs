@@ -9,7 +9,12 @@ namespace Code.Worlds
     public class AreaSpawnPoint : MonoBehaviour
     {
         [field: Header("Spawn Point Setting")]
-        [field: SerializeField] public string Id { get; private set; } = "Default";
+        [field: SerializeField] public SpawnPointSO Id { get; private set; }
+
+        private void Awake()
+        {
+            Debug.Assert(Id != null, $"[AreaSpawnPoint] Id 연결 안 됨: {gameObject.name}", this);
+        }
 
         private void OnDrawGizmos()
         {
