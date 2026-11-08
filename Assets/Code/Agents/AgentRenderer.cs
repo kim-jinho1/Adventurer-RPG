@@ -91,16 +91,34 @@ namespace Code.Agents
         public void SetAnimTrigger(AnimParamSO param)
             => _animator.SetTrigger(param.HashValue);
 
-        private void EndTrigger()
-            => OnAnimationEnd?.Invoke();
+        private void EndTrigger(AnimationEvent evt)
+        {
+            if (IsFromLeavingState(evt))
+                return;
 
-        private void AttackTrigger()
-            => OnAttackTrigger?.Invoke();
+            OnAnimationEnd?.Invoke();
+        }
+
+        private void AttackTrigger(AnimationEvent evt)
+        {
+            if (IsFromLeavingState(evt))
+                return;
+
+            OnAttackTrigger?.Invoke();
+        }
 
         private void WeaponSwapTrigger()
             => OnWeaponSwapTrigger?.Invoke();
 
         private void FootstepTrigger()
             => OnFootstepTrigger?.Invoke();
+
+        private bool IsFromLeavingState(AnimationEvent evt)
+        {
+            if (!_animator.IsInTransition(0))
+                return false;
+
+            return evt.animatorStateInfo.fullPathHash != _animator.GetNextAnimatorStateInfo(0).fullPathHash;
+        }
     }
 }
