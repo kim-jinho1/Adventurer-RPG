@@ -1,10 +1,11 @@
 # 모험가 RPG (Adventurer RPG)
 
-마을에서 장비를 만들고, 숲에서 재료를 모으고, 폐광의 보스를 잡는 3D 액션 RPG입니다.
+필드에서 모은 재료로 장비를 만들어 더 깊은 던전으로 나아가는 제작 중심 3D 액션 RPG입니다.
 Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모바일 최적화 과정**이 이 프로젝트의 중심입니다.
 
+- **포트폴리오**: [모험가 RPG (노션)](https://www.notion.so/3f2048b7ae348123adf4e4bfcd2b6179)
 - **플레이 영상**: https://youtu.be/_4AAPZbDJ-c
-- **개발**: 1인 · 2026년 9월 ~ (10/13 발표, 이후 리팩토링 · 최적화)
+- **인원 · 기간**: 1명 · 2026.09.02 ~ 2026.10.12 (이후 리팩토링 · 최적화)
 - **엔진**: Unity 6 (6000.5.5f1) · C# · URP · Android / PC
 - **측정 기기**: Galaxy A55 5G (Exynos 1480 / Xclipse 530)
 
@@ -20,18 +21,26 @@ Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모�
 
 ## 먼저 볼 코드
 
-| 무엇 | 어디 | 한 줄 설명 |
-|---|---|---|
-| 모듈 조합 | `Assets/Code/Modules/` · `Assets/Code/Agents/Agent.cs` | 책임 하나당 모듈 하나, 다른 모듈은 인터페이스로 받습니다 |
-| 작업 흐름 | `Assets/Code/Interactions/WorkModule.cs` | 채집 · 제작 작업 요청을 한곳에서 들고, 상호작용 모듈은 찾기 · 말풍선만 맡습니다 |
-| 인벤토리 | `Assets/Code/Inventories/InventoryModule.cs` | 밖에는 읽기 전용(`IReadOnlyInventoryItem`), 넣기 전에 `CanAddItems`로 공간을 검사합니다 |
-| 줍기 | `Assets/Code/Inventories/ItemCollectorModule.cs` · `Assets/Code/Items/Drops/ItemPickup.cs` | 줍기를 받을지는 플레이어 쪽이 정합니다. 가방이 차면 대기 줄에 두고 알림은 한 번만 냅니다 |
-| 드랍 공유 | `Assets/Code/Items/Drops/ItemScatterSO.cs` | 적 드랍과 채집 넘침이 같은 "바닥에 뿌리기"를 씁니다 |
-| 장비 | `Assets/Code/Equipments/EquipmentModule.cs` · `EquipSlotTableSO.cs` | 슬롯 규칙을 표 SO 하나에 모았습니다 |
-| 창 뼈대 | `Assets/Code/UIs/AbstractPanel.cs` · `Assets/Code/Items/IItemAction.cs` | 창은 칸 번호만 넘기고, 버튼 행동은 아이템이 정합니다 |
-| 오브젝트 풀 | `Assets/Code/Pools/` · `Assets/Code/Combats/Feedbacks/PoolingEffect.cs` | 이펙트 · 드랍 아이템 풀링, 지역을 떠나기 전 회수 |
-| 저장 | `Assets/Code/GameSystems/Saves/SaveManager.cs` | 원자 저장, 깨진 파일은 따로 뺍니다 |
-| 적 AI | `Assets/Code/Agents/Enemies/BT/` | Unity Behavior 그래프에서 쓰는 커스텀 노드 |
+- **모듈 조합** — 책임 하나당 모듈 하나, 다른 모듈은 인터페이스로 받습니다
+  - `Assets/Code/Modules/` · `Assets/Code/Agents/Agent.cs`
+- **작업 흐름** — 채집 · 제작 작업 요청을 한곳에서 들고, 상호작용 모듈은 찾기 · 말풍선만 맡습니다
+  - `Assets/Code/Interactions/WorkModule.cs`
+- **인벤토리** — 밖에는 읽기 전용(`IReadOnlyInventoryItem`), 넣기 전에 `CanAddItems`로 공간을 검사합니다
+  - `Assets/Code/Inventories/InventoryModule.cs`
+- **줍기** — 줍기를 받을지는 플레이어 쪽이 정합니다. 가방이 차면 대기 줄에 두고 알림은 한 번만 냅니다
+  - `Assets/Code/Inventories/ItemCollectorModule.cs` · `Assets/Code/Items/Drops/ItemPickup.cs`
+- **드랍 공유** — 적 드랍과 채집 넘침이 같은 "바닥에 뿌리기"를 씁니다
+  - `Assets/Code/Items/Drops/ItemScatterSO.cs`
+- **장비** — 슬롯 규칙을 표 SO 하나에 모았습니다
+  - `Assets/Code/Equipments/EquipmentModule.cs` · `EquipSlotTableSO.cs`
+- **창 뼈대** — 창은 칸 번호만 넘기고, 버튼 행동은 아이템이 정합니다
+  - `Assets/Code/UIs/AbstractPanel.cs` · `Assets/Code/Items/IItemAction.cs`
+- **오브젝트 풀** — 이펙트 · 드랍 아이템 풀링, 지역을 떠나기 전 회수
+  - `Assets/Code/Pools/` · `Assets/Code/Combats/Feedbacks/PoolingEffect.cs`
+- **저장** — 원자 저장, 깨진 파일은 따로 뺍니다
+  - `Assets/Code/GameSystems/Saves/SaveManager.cs`
+- **적 AI** — Unity Behavior 그래프에서 쓰는 커스텀 노드
+  - `Assets/Code/Agents/Enemies/BT/`
 
 ## 모바일 최적화
 
