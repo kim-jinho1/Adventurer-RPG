@@ -95,6 +95,8 @@ namespace Code.Agents.Characters.Attacks
             _lastAttackTime = Time.time;
             IsAttacking = false;
             _mover.StopImmediately();
+
+            // 받는 쪽이 바로 상태를 바꾸며 StopAttack까지 부르므로 정리를 끝낸 뒤 마지막에 알린다
             _attackModule.InvokeAttackEnd();
         }
     }

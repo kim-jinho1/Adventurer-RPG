@@ -17,16 +17,13 @@ namespace Code.Agents.Characters.FSM
 
         public override void Enter()
         {
-            _isTriggerCall = false;
             _mover.CanManualMovement = false;
             _characterAttackModule.OnAttackEnd += HandleAnimationEnd;
         }
 
-        public override void Update()
+        public override void HandleAnimationEnd()
         {
-            base.Update();
-            if (_isTriggerCall)
-                _character.ChangeState(CharacterStateEnum.IDLE);
+            _character.ChangeState(CharacterStateEnum.IDLE);
         }
 
         public override void Exit()

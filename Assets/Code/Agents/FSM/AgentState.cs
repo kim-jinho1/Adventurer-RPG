@@ -10,7 +10,6 @@ namespace Code.Agents.FSM
         protected Agent _agent;
 
         protected int _clipHash;
-        protected bool _isTriggerCall;
 
         protected IRenderer _renderer;
 
@@ -33,7 +32,6 @@ namespace Code.Agents.FSM
         public virtual void Enter()
         {
             _renderer.CrossFadeState(_clipHash);
-            _isTriggerCall = false;
         }
 
         /// <summary>
@@ -43,11 +41,9 @@ namespace Code.Agents.FSM
         { }
 
         /// <summary>
-        /// 애니메이션 종료 트리거를 호출하여 상태 전환을 허용합니다.
+        /// 애니메이션이 끝나면 호출됩니다. 끝을 받아야 하는 상태가 override합니다.
         /// </summary>
         public virtual void HandleAnimationEnd()
-        {
-            _isTriggerCall = true;
-        }
+        { }
     }
 }
