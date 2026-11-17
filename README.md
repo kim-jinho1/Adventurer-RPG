@@ -5,7 +5,7 @@ Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모�
 
 - **포트폴리오**: [모험가 RPG (노션)](https://www.notion.so/3f2048b7ae348123adf4e4bfcd2b6179)
 - **플레이 영상**: https://youtu.be/_4AAPZbDJ-c
-- **인원 · 기간**: 1명 · 2026.09.02 ~ 2026.10.12 (이후 리팩토링 · 최적화)
+- **인원 · 기간**: 1명 · 2026.09.02 ~ 진행 중
 - **엔진**: Unity 6 (6000.5.5f1) · C# · URP · Android / PC
 - **측정 기기**: Galaxy A55 5G (Exynos 1480 / Xclipse 530)
 
