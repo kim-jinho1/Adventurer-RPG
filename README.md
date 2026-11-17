@@ -1,6 +1,6 @@
 # 모험가 RPG (Adventurer RPG)
 
-필드에서 모은 재료로 장비를 만들어 더 깊은 던전으로 나아가는 제작 중심 3D 액션 RPG입니다.
+필드에서 모은 재료로 장비를 만들어 더 깊은 던전으로 나아가는 제작 중심 3D 액션 어드벤처 RPG입니다.
 Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모바일 최적화 과정**이 이 프로젝트의 중심입니다.
 
 - **포트폴리오**: [모험가 RPG (노션)](https://www.notion.so/3f2048b7ae348123adf4e4bfcd2b6179)
@@ -97,7 +97,8 @@ Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모�
 | 부분 | 출처 |
 |---|---|
 | 모듈 · `Agent` · FSM · 스탯 · 데미지 캐스터 · `IndexedAsset` · `AnimParamSO`의 뼈대 | 수업 프로젝트 구조에서 출발해 3D · 이 게임에 맞게 고침 |
-| 오브젝트 풀 (`Assets/Code/Pools/`) | 수업 라이브러리 GondrLib에서 가져와, 최대 개수 · 꺼낸 것 추적 · 지역 이동 회수를 더함 |
+| 오브젝트 풀 (`Assets/Code/Pools/`) | 수업 라이브러리 GondrLib에서 가져와, 위치를 잡은 뒤 켜기 · 꺼낸 것 추적(중복 Push 무시) · 돌려놓을 때 정리(`CleanUpItem`) · 지역 이동 회수 · 최대 개수를 더함 |
+| 저장 (`Assets/Code/GameSystems/Saves/`) | 수업 코드에서 출발해 대부분 직접 다시 짬 |
 | 이벤트 버스 (`Assets/Code/CoreSystem/Bus/`) | 수업 코드 |
 | 수집 · 제작 첫 버전 (아이템 · 인벤토리 · 제작 · 채집 · UI) | AI 코딩 에이전트(Claude Code)가 작성 → 아래 리팩토링으로 다시 짬 |
 
