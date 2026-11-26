@@ -10,9 +10,9 @@ Android 실기기에서 프로파일러로 병목을 찾아 줄여 나간 **모�
 - **엔진**: Unity 6 (6000.5.5f1) · C# · URP · Android / PC
 - **측정 기기**: Galaxy A55 5G (Exynos 1480 / Xclipse 530)
 
-| 전투 | 제작 | 보스 처치 |
-|---|---|---|
-| ![전투](Docs/Media/01_Combat.gif) | ![제작](Docs/Media/06_Craft.gif) | ![보스 처치](Docs/Media/11_BossKill.gif) |
+| 전투 | 제작 |
+|---|---|
+| ![전투](Docs/Media/01_Combat.gif) | ![제작](Docs/Media/06_Craft.gif) |
 
 > 영상과 GIF는 **10/20 빌드**로 녹화했습니다. 아래 리팩토링 · 풀링 · 싼 블룸 적용 전 화면입니다.
 
